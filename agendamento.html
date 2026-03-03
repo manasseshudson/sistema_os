@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Agenda de Serviços</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FullCalendar -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR (igual ao seu sistema) -->
+  <aside class="w-64 bg-white shadow-md p-4">
+    <h1 class="text-xl font-bold mb-6">Ordem de Serviço</h1>
+
+    <nav class="space-y-3">
+      <a class="block text-gray-600">Dashboard</a>
+      <a class="block text-gray-600">Ordem de Serviços</a>
+      <a class="block text-gray-600">Clientes</a>
+      <a class="block font-semibold text-indigo-600">Agenda</a>
+    </nav>
+  </aside>
+
+  <!-- CONTEÚDO -->
+  <main class="flex-1 p-8">
+
+    <div class="bg-white rounded-2xl shadow p-6">
+      <h2 class="text-xl font-semibold mb-4">
+        Agenda de Serviços
+      </h2>
+
+      <div id="calendar"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="fixed inset-0 bg-black/40 hidden items-center justify-center">
+  <div class="bg-white rounded-xl p-6 w-96">
+    <h3 class="text-lg font-semibold mb-4">Novo Agendamento</h3>
+
+    <input id="titulo" class="border w-full p-2 rounded mb-3" placeholder="Descrição do serviço">
+
+    <button onclick="salvarEvento()" class="bg-indigo-600 text-white px-4 py-2 rounded w-full">
+      Salvar
+    </button>
+  </div>
+</div>
+
+<script>
+  let dataSelecionada = null;
+
+  document.addEventListener('DOMContentLoaded', function () {
+
+    const calendarEl = document.getElementById('calendar');
+
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      locale: 'pt-br',
+
+      dateClick: function(info) {
+        dataSelecionada = info.dateStr;
+        document.getElementById('modal').classList.remove('hidden');
+        document.getElementById('modal').classList.add('flex');
+      }
+    });
+
+    calendar.render();
+
+    window.salvarEvento = function () {
+      const titulo = document.getElementById('titulo').value;
+
+      if (!titulo) return;
+
+      calendar.addEvent({
+        title: titulo,
+        start: dataSelecionada
+      });
+
+      document.getElementById('modal').classList.add('hidden');
+      document.getElementById('titulo').value = "";
+    }
+
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Ordem de Serviço</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#6366f1", // Indigo-500 for a modern, trusty primary color
+              "primary-hover": "#4f46e5",
+              "background-light": "#f3f4f6", // Gray-100
+              "background-dark": "#0f172a", // Slate-900
+              "surface-light": "#ffffff",
+              "surface-dark": "#1e293b", // Slate-800
+              "sidebar-light": "#ffffff",
+              "sidebar-dark": "#111827", // Gray-900
+            },
+            fontFamily: {
+              display: ["Inter", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.5rem",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+
+      .dark ::-webkit-scrollbar-thumb {
+        background: #475569;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .modal {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+
+      .modal.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal-content {
+        transform: scale(0.95);
+        transition: transform 0.3s ease;
+      }
+
+      .modal.active .modal-content {
+        transform: scale(1);
+      }
+    </style>
+  </head>
+  <body class="bg-background-light dark:bg-background-dark text-gray-700 dark:text-gray-200 transition-colors duration-200 antialiased overflow-hidden">
+    <div class="flex h-screen">
+	<div   id="overlay"   class="fixed inset-0 bg-black/50 z-40 hidden md:hidden"   onclick="toggleSidebar()" ></div>
+      <aside
+  id="sidebar"
+  class="fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-900
+         transform -translate-x-full transition-transform duration-300
+         z-50 md:translate-x-0 md:static md:z-auto"
+>
+        <div class="h-20 flex items-center justify-center border-b border-gray-100 dark:border-gray-800 px-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl flex items-center justify-center text-primary shadow-sm">
+              <span class="material-icons-round text-2xl">home_repair_service</span>
+			  <button type="button" onclick="toggleSidebar()" class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">☰</button>
+            </div>
+            <div class="flex flex-col">
+              <h1 class="text-base font-bold text-gray-800 dark:text-white tracking-tight leading-none uppercase">Ordem de</h1>
+              <span class="text-lg font-black text-primary tracking-tight leading-none uppercase">Serviço</span>
+            </div>
+          </div>
+        </div>
+		
+		
+        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+			<a href="/principal/<%= uid_usuario %>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary transition-colors">
+				<span class="material-icons-round text-xl mr-3">people</span> Dashboard
+			</a>
+			<!--
+			<a href="/ordem_servico/<%= uid_usuario %>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary transition-colors">
+				<span class="material-icons-round text-xl mr-3">people</span> Ordem de Serviços 
+			</a>
+			-->
+			<a href="/clientes/<%= uid_usuario %>" class="flex items-center px-4 py-3 text-sm font-medium text-primary bg-indigo-50 dark:bg-indigo-900/20 rounded-lg transition-colors relative group" >
+				<span class="material-icons-round text-xl mr-3">dashboard</span> Clientes
+			</a>
+			<a href="/config/<%= uid_usuario %>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary transition-colors">
+				<span class="material-icons-round text-xl mr-3">assignment_turned_in</span> Configuraçãoes 
+			</a>
+			<!--
+			<a href="/status/<%= uid_usuario %>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary transition-colors">
+				<span class="material-icons-round text-xl mr-3">assignment_turned_in</span> Status 
+			</a>
+			<a href="/tipoServico/<%= uid_usuario %>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary transition-colors">
+				<span class="material-icons-round text-xl mr-3">category</span> Tipo de Serviço 
+			</a>
+			-->
+			<div class="pt-4 mt-4 border-t border-gray-100 dark:border-gray-800">
+				<a href="/" class="flex items-center px-4 py-3 text-sm font-medium text-red-500 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" href="#">
+					<span class="material-icons-round text-xl mr-3">logout</span> Sair 
+				</a>
+			</div>
+        </nav>
+		
+        <!--<div class="p-4 border-t border-gray-100 dark:border-gray-800">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">H</div>
+            <div>
+              <p class="text-sm font-semibold text-gray-700 dark:text-gray-200">Hudson</p>
+              <p class="text-xs text-gray-500 dark:text-gray-500">Admin</p>
+            </div>
+          </div>
+        </div>-->
+      </aside>
+      <main class="flex-1 flex flex-col overflow-hidden relative">
+        <header class="h-16 bg-surface-light dark:bg-surface-dark border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 z-10">
+          <button
+  id="menuBtn"
+  type="button"
+  onclick="toggleSidebar()"
+  class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+>
+  <span class="material-icons-round text-2xl">menu</span>
+</button>
+
+		  
+		  <div class="flex items-center gap-4">
+            <button class="md:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300">
+              <!--<span class="material-icons-round">menu</span>-->
+            </button>
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-white"></h2>
+          </div>
+          <div class="flex items-center gap-4">
+            <button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors" onclick="document.documentElement.classList.toggle('dark')">
+              <span class="material-icons-round">dark_mode</span>
+            </button>
+          </div>
+        </header>
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-6">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            
+          </div>
+          <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-gray-100 dark:border-gray-700/50 flex flex-col">
+            <div class="p-5 border-b border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+				<h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2"> Clientes Cadastrados 
+					<span class="px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-xs font-normal text-gray-500 dark:text-gray-400"> total</span>
+				</h3>
+            </div>
+			
+            <div class="overflow-x-auto hidden md:block">
+
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th class="px-6 py-4">Nome</th>
+                    <th class="px-6 py-4">Email</th>
+					<th class="px-6 py-4">Telefone</th>
+                    <th class="px-6 py-4">Celular</th>
+                    <th class="px-6 py-4 text-center">Ação</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+					<% clientes.forEach(clientes=> { %>
+						<tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group">
+							<td class="px-6 py-4">
+								<span class="font-mono text-sm text-gray-800 dark:text-gray-200 font-medium"><%= clientes.nome %></span>
+							</td>
+							<td class="px-6 py-4">
+								<span class="font-mono text-sm text-gray-800 dark:text-gray-200 font-medium"><%= clientes.email %></span>
+							</td>
+							<td class="px-6 py-4">
+								<span class="font-mono text-sm text-gray-800 dark:text-gray-200 font-medium"><%= clientes.endereco_telefone %></span>
+							</td>
+							<td class="px-6 py-4">
+								<span class="font-mono text-sm text-gray-800 dark:text-gray-200 font-medium"><%= clientes.endereco_celular %></span>
+							</td>
+							<td class="px-6 py-4 text-center">
+								<a href="/clienteEditar/<%= uid_usuario %>/<%= clientes.id_cliente %>"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">Editar </span></a>
+							</td>
+							<td></td>
+						</tr>
+					<% }) %>	
+				  </tbody>
+              </table>
+            </div>
+			
+			<div class="space-y-4 md:hidden">
+  <% clientes.forEach(cliente => { %>
+    <div class="bg-white dark:bg-gray-900 rounded-xl shadow p-4">
+      
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-sm text-gray-500">Nome</p>
+          <p class="font-semibold text-gray-800 dark:text-gray-200">
+            <%= cliente.nome %>
+          </p>
+        </div>
+
+        <a 
+          href="/clienteEditar/<%= uid_usuario %>/<%= cliente.id_cliente %>"
+          class="text-xs px-3 py-1 rounded-full bg-yellow-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+        >
+          Editar
+        </a>
+      </div>
+
+      <div class="mt-3 space-y-2 text-sm">
+        <p>
+          <span class="text-gray-500">Email:</span><br>
+          <span class="text-gray-700 dark:text-gray-300">
+            <%= cliente.email %>
+          </span>
+        </p>
+
+        <p>
+          <span class="text-gray-500">Telefone:</span>
+          <span class="text-gray-700 dark:text-gray-300">
+            <%= cliente.endereco_telefone %>
+          </span>
+        </p>
+
+        <p>
+          <span class="text-gray-500">Celular:</span>
+          <span class="text-gray-700 dark:text-gray-300">
+            <%= cliente.endereco_celular %>
+          </span>
+        </p>
+      </div>
+
+    </div>
+  <% }) %>
+</d
+
+			
+          </div>
+          <div class="text-center text-xs text-gray-400 dark:text-gray-600 py-4"> © 2025 Ordem de Serviço. Todos os direitos reservados. </div>
+        </div>
+        <div class="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-30">
+
+          <!--<button class="group flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 rounded-full px-6 py-4" id="openModalBtn">
+		  --><button
+  class="group flex items-center justify-center gap-2
+         bg-primary hover:bg-primary-hover text-white
+         shadow-lg hover:shadow-xl hover:scale-105
+         transition-all duration-200
+         rounded-full
+         px-4 py-3 md:px-6 md:py-4"
+  id="openModalBtn"
+>
+		  
+            <span class="material-icons-round text-xl">add</span>
+            <span class="font-semibold text-sm">Nova Ordem de Serviço</span>
+          </button>
+        </div>
+      </main>
+    </div>
+	
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm modal" id="modalOverlay">
+		<div class="bg-surface-light dark:bg-surface-dark w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden modal-content m-4 border border-gray-100 dark:border-gray-700/50 flex flex-col max-h-[95vh]">
+			<div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/20">
+			<h3 class="text-lg font-bold text-gray-800 dark:text-white">Nova Ordem de Serviço</h3>
+		<button class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors" onclick="closeModal()">
+		<span class="material-icons-round">close</span>
+		</button>
+		</div>
+		<div class="p-6 overflow-y-auto custom-scrollbar">
+		<div class="grid grid-cols-6 gap-4">
+		<div class="col-span-2 space-y-1">
+		<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Placa</label>
+		<input id="placa" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none" placeholder="ABC-1234" type="text"/>
+		</div>
+		<div class="col-span-4 space-y-1">
+		<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Cliente</label>
+		<input id="cliente" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none" placeholder="Nome do cliente" type="text"/>
+		</div>
+		<div class="col-span-2 space-y-1">
+		<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Data Entrada</label>
+		<input id="competencia" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none" type="date"/>
+		
+		</div>
+		<div class="col-span-2 space-y-1">
+		<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Previsão</label>
+		<div class="relative">
+		<input id="dataPrevisaoSaida" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none" type="date"/>
+		</div>
+		</div>
+		<div class="col-span-2 space-y-1">
+		<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Valor (R$)</label>
+		<input id="valor" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none" placeholder="0,00" type="text"/>
+		</div>
+		<div class="col-span-3 space-y-1">
+		<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Tipo de Serviço</label>
+		<div class="relative">
+		<select id="tipo_servico" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none appearance-none">
+			<option value="">Selecione</option>
+		</select>
+		<span class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+		<span class="material-icons-round text-lg">expand_more</span>
+		</span>
+		</div>
+		</div>
+		<div class="col-span-3 space-y-1">
+		<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Situação</label>
+		<div class="relative">
+		<select id="situacao" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none appearance-none">
+			<option value="">Selecione</option>
+		</select>
+		<span class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+		<span class="material-icons-round text-lg">expand_more</span>
+		</span>
+		</div>
+		</div>
+		<div class="col-span-6 space-y-1">
+		<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Observação</label>
+		<textarea id="observacao" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none resize-none h-20"></textarea>
+		</div>
+		</div>
+		</div>
+		<div class="px-6 py-4 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-3 bg-gray-50/50 dark:bg-gray-800/20">
+		<button class="px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white font-medium hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors text-sm" id="closeModalBtn">
+						Cancelar
+					</button>
+		<button id="salvarOS" class="px-6 py-2 bg-primary hover:bg-primary-hover text-white font-medium rounded-lg shadow-sm hover:shadow hover:-translate-y-0.5 transition-all duration-200 text-sm">
+						Salvar Ordem
+					</button>
+		</div>
+		</div>
+		</div>
+		
+	<div id="modalDetalhes" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50" >
+		<div class="bg-white w-full max-w-lg rounded-xl shadow-lg p-6 relative">
+			<button onclick="fecharModalDetalhes()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600" >✕</button>
+			<h2 class="text-xl font-semibold mb-4">Detalhes da Ordem de Serviço</h2>
+			<div class="space-y-2 text-sm">
+				<p><strong>Nº OS:</strong> <span id="modal-os"></span></p>
+				<p><strong>Cliente:</strong> <span id="modal-cliente"></span></p>
+				<p><strong>Entrada:</strong> <span id="modal-entrada"></span></p>
+				<p><strong>Previsão:</strong> <span id="modal-prev"></span></p>
+				<p><strong>Status:</strong> <span id="modal-status"></span></p>
+				<p><strong>observaçaõ:</strong> <span id="modal-observacao"></span></p>
+				
+				
+				
+			</div>
+			<div class="mt-6 text-right">
+				<button onclick="fecharModalDetalhes()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700" >Fechar</button>
+			</div>
+		</div>
+	</div>
+
+	
+	
+    <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.js"></script>
+	<script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const icon = document.querySelector('#menuBtn span');
+
+    const isOpen = !sidebar.classList.contains('-translate-x-full');
+
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+
+    icon.textContent = isOpen ? 'menu' : 'close';
+  }
+</script>
+
+
+    <script>
+	
+		document.getElementById("placa").addEventListener("blur", async function () {
+			const placa = this.value.trim();
+
+			if (placa !== "") {
+			try {
+				// Chama a API
+				const response = await fetch(`/getDados/${placa}`);
+			  
+				if (!response.ok) {
+					throw new Error("Erro ao buscar dados");
+				}
+
+				const dados = await response.json();
+				console.log(dados)
+				// Preenche o campo cliente
+				document.getElementById("cliente").value = dados.cliente || "";
+
+			} catch (error) {
+			  console.error("Erro:", error);
+			  document.getElementById("cliente").value = "";
+			}
+			}
+		});
+	
+	
+      // Modal Logic
+      const openModalBtn = document.getElementById('openModalBtn');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const modalOverlay = document.getElementById('modalOverlay');
+
+      function openModal() {
+        modalOverlay.classList.add('active');
+      }
+
+      function closeModal() {
+        modalOverlay.classList.remove('active');
+      }
+      openModalBtn.addEventListener('click', openModal);
+      closeModalBtn.addEventListener('click', closeModal);
+      // Close modal when clicking outside content
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+          closeModal();
+        }
+      });
+      // Close modal on escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+          closeModal();
+        }
+      });
+    </script>
+	<script>
+		const campo = document.getElementById('valor');
+		
+		campo.addEventListener('input', () => {
+		  let valor = campo.value.replace(/\D/g, ''); // remove tudo que não é número
+		  valor = (valor / 100).toFixed(2) + ''; // divide por 100 e fixa 2 casas
+		  valor = valor.replace('.', ','); // troca ponto por vírgula
+		  //valor = 'R$ ' + valor.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // formata milhar
+		  valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // formata milhar
+		  valor = valor.replace(',', '.');
+		  campo.value = valor;
+		});
+</script>
+<script>
+		$(document).ready(function () {
+		
+			//COMBO TIPO DE SERVIÇO
+			$.get("/tipo_servico", function (data, status) {			
+				var select2 = $('#tipo_servico');
+				select2.html('');
+				select2.append('<option value="" selected>Selecione</option>');
+				for (let i = 0; i < data.length; i++) {
+					select2.append('<option value="' + data[i].id + '">' + data[i].nome + '</option>');
+				}
+			});
+			
+			//COMBO SITUAÇAO
+			$.get("/situacao", function (data, status) {
+				var select2 = $('#situacao');
+				select2.html('');
+				select2.append('<option value="" selected>Selecione</option>');
+				for (let i = 0; i < data.length; i++) {
+					select2.append('<option value="' + data[i].id + '">' + data[i].nome + '</option>');
+				}
+			});
+		
+			function Competencia() {
+				var data = new Date();
+				var dia = String(data.getDate()).padStart(2, '0');
+				var mes = String(data.getMonth() + 1).padStart(2, '0');
+				var ano = data.getFullYear();
+				dataAtual = dia + '/' + mes + '/' + ano;
+				return dataAtual;
+			}
+			
+			var getData = Competencia();
+			document.getElementById("competencia").value = getData;
+		
+			$("#salvarOS").click(function () {
+				
+				let placa = $("#placa").val();				
+				let cliente = $("#cliente").val();				
+				let dataLancamento = $("#competencia").val();				
+				let dataPrevisaoSaida = $("#dataPrevisaoSaida").val();				
+				let situacao = $("#situacao").val();
+				let tipo_servico = $("#tipo_servico").val();
+				let valor = $("#valor").val();
+				let obs = $("#observacao").val();
+				let uid_usuario = "JwBQb518jg"
+
+
+
+				console.log(dataPrevisaoSaida)
+				console.log(dataLancamento)
+				if(dataPrevisaoSaida==""){
+					dataPrevisaoSaida="";
+				}else{
+					dataPrevisaoSaida = formatarData(dataPrevisaoSaida);
+				}
+				
+				if(dataLancamento==""){
+					alert("Informe a Data de Entrada")
+					return;
+				}
+				
+				let dataLanc = formatarData(dataLancamento)
+				
+				console.log(dataLanc)
+				
+				
+				
+				$.post('/addOS', {
+
+					placa: placa,
+					cliente: cliente,
+					dataLancamento: dataLanc,
+					dataPrevisaoSaida: dataPrevisaoSaida,
+					situacao: situacao,
+					tipo_servico: tipo_servico,
+					valor: valor,
+					observacao: obs,
+					uid_usuario: uid_usuario
+					
+				}, function (resposta) {
+					alert(resposta.mensagem)
+					window.location.href = "/principal/"+"<%= uid_usuario %>"
+					
+				});				
+			})
+		
+		
+		function formatarData(data){
+			
+			
+			//const data = "2025-09-30";
+			const partes = data.split("-");
+			const date = new Date(partes[0], partes[1] - 1, partes[2]); // ano, mês (0-index), dia
+
+			const formatada = date.toLocaleDateString("pt-BR");
+			console.log(formatada); // 30/09/2025
+			return formatada;
+
+		}
+
+		document.getElementById("placa").addEventListener("blur", async function () {
+			const placa = this.value.trim();
+
+			if (placa !== "") {
+			try {
+				// Chama a API
+				const response = await fetch(`/getDados/${placa}`);
+			  
+				if (!response.ok) {
+					throw new Error("Erro ao buscar dados");
+				}
+
+				const dados = await response.json();
+				console.log(dados)
+				// Preenche o campo cliente
+				document.getElementById("cliente").value = dados.cliente || "";
+
+			} catch (error) {
+			  console.error("Erro:", error);
+			  document.getElementById("cliente").value = "";
+			}
+			}
+		});
+		
+		
+		
+
+  })
+	function visualizar(id){
+		//COMBO SITUAÇAO
+		$.get("/dadosOs/"+id, function (data, status) {
+			console.log(data)
+			
+			for (let i = 0; i < data.length; i++) {
+				console.log(data[i].numeroOS)
+				document.getElementById("numeroOS").textContent =data[i].numeroOS;				
+				document.getElementById("nomeCliente").textContent =data[i].cliente;
+				
+				
+				//document.getElementById("nomeCliente").textContent =data[i].dataLancamento;
+				//document.getElementById("nomeCliente").textContent =data[i].valor;
+				
+			}
+			
+		});
+	}
+	function concluirOrdemServico(idOrdemServico){
+		//alert(idOrdemServico);
+		if (confirm("Confirma a Finalização da Ordem de Serviço?")) {
+			$.post('/finalizarOrdemServico', {
+				idOrdemServico: idOrdemServico			
+			}, function (resposta) {
+				alert(resposta.mensagem)
+				window.location.href = "/principal/"+"<%= uid_usuario %>"
+			});			
+		}
+	}
+	</script>
+	<script>
+		function abrirModalDetalhes(btn) {
+			document.getElementById('modal-os').innerText = btn.dataset.os
+			document.getElementById('modal-cliente').innerText = btn.dataset.cliente
+			document.getElementById('modal-entrada').innerText = btn.dataset.entrada
+			document.getElementById('modal-prev').innerText = btn.dataset.prev || '-'
+			document.getElementById('modal-status').innerText = btn.dataset.status
+			document.getElementById('modal-observacao').innerText = btn.dataset.observacao
+
+			document.getElementById('modalDetalhes').classList.remove('hidden')
+		}
+		function fecharModalDetalhes() {
+			document.getElementById('modalDetalhes').classList.add('hidden')
+		}
+</script>
+
+  </body>
+</html>

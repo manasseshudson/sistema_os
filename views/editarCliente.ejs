@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Ordem de Serviço</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#6366f1", // Indigo-500 for a modern, trusty primary color
+              "primary-hover": "#4f46e5",
+              "background-light": "#f3f4f6", // Gray-100
+              "background-dark": "#0f172a", // Slate-900
+              "surface-light": "#ffffff",
+              "surface-dark": "#1e293b", // Slate-800
+              "sidebar-light": "#ffffff",
+              "sidebar-dark": "#111827", // Gray-900
+            },
+            fontFamily: {
+              display: ["Inter", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.5rem",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+
+      .dark ::-webkit-scrollbar-thumb {
+        background: #475569;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .modal {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+
+      .modal.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal-content {
+        transform: scale(0.95);
+        transition: transform 0.3s ease;
+      }
+
+      .modal.active .modal-content {
+        transform: scale(1);
+      }
+    </style>
+  </head>
+  <body class="bg-background-light dark:bg-background-dark text-gray-700 dark:text-gray-200 transition-colors duration-200 antialiased overflow-hidden">
+    <div class="flex h-screen">
+	<div   id="overlay"   class="fixed inset-0 bg-black/50 z-40 hidden md:hidden"   onclick="toggleSidebar()" ></div>
+      <aside
+  id="sidebar"
+  class="fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-900
+         transform -translate-x-full transition-transform duration-300
+         z-50 md:translate-x-0 md:static md:z-auto"
+>
+        <div class="h-20 flex items-center justify-center border-b border-gray-100 dark:border-gray-800 px-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl flex items-center justify-center text-primary shadow-sm">
+              <span class="material-icons-round text-2xl">home_repair_service</span>
+			  <button type="button" onclick="toggleSidebar()" class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">☰</button>
+            </div>
+            <div class="flex flex-col">
+              <h1 class="text-base font-bold text-gray-800 dark:text-white tracking-tight leading-none uppercase">Ordem de</h1>
+              <span class="text-lg font-black text-primary tracking-tight leading-none uppercase">Serviço</span>
+            </div>
+          </div>
+        </div>
+		
+		
+        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+			<a href="/principal/<%= uid_usuario %>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary transition-colors">
+				<span class="material-icons-round text-xl mr-3">people</span> Dashboard
+			</a>
+			<!--
+			<a href="/ordem_servico/<%= uid_usuario %>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary transition-colors">
+				<span class="material-icons-round text-xl mr-3">people</span> Ordem de Serviços 
+			</a>
+			-->
+			
+			
+			<a href="/clientes/<%= uid_usuario %>" class="flex items-center px-4 py-3 text-sm font-medium text-primary bg-indigo-50 dark:bg-indigo-900/20 rounded-lg transition-colors relative group" >
+				<span class="material-icons-round text-xl mr-3">dashboard</span> Clientes
+			</a>
+			<a href="/config/<%= uid_usuario %>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary transition-colors">
+				<span class="material-icons-round text-xl mr-3">assignment_turned_in</span> Configuraçãoes 
+			</a>
+			<!--
+			<a href="/status/<%= uid_usuario %>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary transition-colors">
+				<span class="material-icons-round text-xl mr-3">assignment_turned_in</span> Status 
+			</a>
+			<a href="/tipoServico/<%= uid_usuario %>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary transition-colors">
+				<span class="material-icons-round text-xl mr-3">category</span> Tipo de Serviço 
+			</a>-->
+			<div class="pt-4 mt-4 border-t border-gray-100 dark:border-gray-800">
+				<a href="/" class="flex items-center px-4 py-3 text-sm font-medium text-red-500 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" href="#">
+					<span class="material-icons-round text-xl mr-3">logout</span> Sair 
+				</a>
+			</div>
+        </nav>
+		
+        <!--<div class="p-4 border-t border-gray-100 dark:border-gray-800">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">H</div>
+            <div>
+              <p class="text-sm font-semibold text-gray-700 dark:text-gray-200">Hudson</p>
+              <p class="text-xs text-gray-500 dark:text-gray-500">Admin</p>
+            </div>
+          </div>
+        </div>-->
+      </aside>
+      <main class="flex-1 flex flex-col overflow-hidden relative">
+        <header class="h-16 bg-surface-light dark:bg-surface-dark border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 z-10">
+          <button
+  id="menuBtn"
+  type="button"
+  onclick="toggleSidebar()"
+  class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+>
+  <span class="material-icons-round text-2xl">menu</span>
+</button>
+
+		  
+		  <div class="flex items-center gap-4">
+            <button class="md:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300">
+              <!--<span class="material-icons-round">menu</span>-->
+            </button>
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-white"></h2>
+          </div>
+          <div class="flex items-center gap-4">
+            <button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors" onclick="document.documentElement.classList.toggle('dark')">
+              <span class="material-icons-round">dark_mode</span>
+            </button>
+          </div>
+        </header>
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-6">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            
+          </div>
+          <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-gray-100 dark:border-gray-700/50 flex flex-col">
+            <div class="p-5 border-b border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+				<h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2"> Cliente:   
+					<span class="px-2 py-0.5 rounded-full bg-gray-300 dark:bg-gray-700 text-xs font-normal text-gray-800 dark:text-gray-800"> <%= nomeCliente %></span>
+				</h3>
+            </div>
+			
+            <div class="overflow-x-auto">
+				<div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden p-8">
+					<div class="mb-8">
+					  <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-200">Alterar Dados Pessoais</h3>
+					</div>
+					<% participante.forEach(dados=>{ %>
+						<div class="border-b border-gray-200 mb-6">
+						  <nav class="flex gap-6">
+							<button
+							  type="button"
+							  class="tab-btn text-sm font-medium pb-3 border-b-2 border-indigo-500 text-indigo-600"
+							  data-tab="cliente"
+							>
+							  Dados do Cliente
+							</button>
+
+							<button
+							  type="button"
+							  class="tab-btn text-sm font-medium pb-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700"
+							  data-tab="motos"
+							>
+							  Motos do Cliente
+							</button>
+						  </nav>
+						</div>
+						<div id="tab-cliente" class="tab-content">
+							<form class="space-y-4" id="formulario" action="javascript:func()" method="post">
+							  <input type="hidden" id="id_cliente" value="<%= id_cliente %>" />
+							  <input type="hidden" id="uid_usuario" value="<%= uid_usuario %>" />
+							  <input type="hidden" id="id_empresa" value="<%= id_empresa %>" />
+
+							  <div class="grid grid-cols-12 gap-4">
+								<div class="col-span-12 lg:col-span-8">
+								  <label for="nome" class="block text-sm font-medium mb-1">Nome</label>
+								  <input id="nome" type="text" value="<%= dados.nome %>"
+									class="w-full h-9 px-3 text-sm rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500" />
+								</div>
+
+								<div class="col-span-12 lg:col-span-4">
+								  <label for="email" class="block text-sm font-medium mb-1">Email</label>
+								  <input id="email" type="email" value="<%= dados.email %>"
+									class="w-full h-9 px-3 text-sm rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500" />
+								</div>
+							  </div>
+
+							  <div class="grid grid-cols-12 gap-4">
+								<div class="col-span-12 md:col-span-3">
+								  <label class="block text-sm font-medium mb-1">Data Nascimento</label>
+								  <input id="nascimento" type="text" placeholder="__/__/____" value="<%= dados.data_nascimento %>"
+									class="w-full h-9 px-3 text-sm rounded-md border border-gray-300" />
+								</div>
+
+								<div class="col-span-12 md:col-span-3">
+								  <label class="block text-sm font-medium mb-1">CPF</label>
+								  <input id="documento" type="text" value="<%= dados.cpf_cnpj %>"
+									class="w-full h-9 px-3 text-sm rounded-md border border-gray-300" />
+								</div>
+
+								<div class="col-span-12 md:col-span-3">
+								  <label class="block text-sm font-medium mb-1">Telefone</label>
+								  <input id="telefone" type="text" value="<%= dados.endereco_telefone %>"
+									class="w-full h-9 px-3 text-sm rounded-md border border-gray-300" />
+								</div>
+
+								<div class="col-span-12 md:col-span-3">
+								  <label class="block text-sm font-medium mb-1">Celular</label>
+								  <input id="celular" type="text" value="<%= dados.endereco_celular %>"
+									class="w-full h-9 px-3 text-sm rounded-md border border-gray-300" />
+								</div>
+							  </div>
+
+							  <div class="grid grid-cols-12 gap-4">
+								<div class="col-span-12 md:col-span-2">
+								  <label class="block text-sm font-medium mb-1">CEP</label>
+								  <input id="cep" type="text" value="<%= dados.endereco_cep %>"
+									class="w-full h-9 px-3 text-sm rounded-md border border-gray-300" />
+								</div>
+
+								<div class="col-span-12 md:col-span-3">
+								  <label class="block text-sm font-medium mb-1">Endereço</label>
+								  <input id="endereco" type="text" value="<%= dados.endereco_rua %>"
+									class="w-full h-9 px-3 text-sm rounded-md border border-gray-300" />
+								</div>
+
+								<div class="col-span-12 md:col-span-3">
+								  <label class="block text-sm font-medium mb-1">Bairro</label>
+								  <input id="bairro" type="text" value="<%= dados.endereco_bairro %>"
+									class="w-full h-9 px-3 text-sm rounded-md border border-gray-300" />
+								</div>
+
+								<div class="col-span-12 md:col-span-3">
+								  <label class="block text-sm font-medium mb-1">Cidade</label>
+								  <input id="cidade" type="text" value="<%= dados.endereco_cidade %>"
+									class="w-full h-9 px-3 text-sm rounded-md border border-gray-300" />
+								</div>
+
+								<div class="col-span-12 md:col-span-1">
+								  <label class="block text-sm font-medium mb-1">UF</label>
+								  <input id="uf" type="text" value="<%= dados.endereco_uf %>"
+									class="w-full h-9 px-2 text-sm rounded-md border border-gray-300" />
+								</div>
+							  </div>
+
+							  <div class="grid grid-cols-12 gap-4">
+								<div class="col-span-12 md:col-span-2">
+								  <label class="block text-sm font-medium mb-1">Número</label>
+								  <input id="numero" type="text" value="<%= dados.endereco_numero %>"
+									class="w-full h-9 px-3 text-sm rounded-md border border-gray-300" />
+								</div>
+
+								<div class="col-span-12 md:col-span-4">
+								  <label class="block text-sm font-medium mb-1">Complemento</label>
+								  <input id="complemento" type="text" value="<%= dados.endereco_complemento %>"
+									class="w-full h-9 px-3 text-sm rounded-md border border-gray-300" />
+								</div>
+							  </div>
+
+							  <div>
+								<label class="block text-sm font-medium mb-1">Observação</label>
+								<textarea id="observacao" rows="2"
+								  class="w-full px-3 py-2 text-sm rounded-md border border-gray-300 resize-none"></textarea>
+							  </div>
+
+							  <div class="flex gap-3 pt-3">
+								<button type="reset"
+								  class="px-6 py-2 text-sm bg-slate-400 hover:bg-slate-500 text-white rounded-md">
+								  Limpar
+								</button>
+								<button  id="alterarDados"
+								  class="px-6 py-2 text-sm bg-indigo-500 hover:bg-indigo-600 text-white rounded-md">
+								  Alterar
+								</button>
+							  </div>
+							</form>
+						</div>
+						<div id="tab-motos" class="tab-content hidden">
+						  <div class="flex justify-between items-center mb-4">
+							<h3 class="text-base font-semibold">Motos do Cliente</h3>
+							<button class="px-4 py-2 text-sm bg-indigo-500 hover:bg-indigo-600 text-white rounded-md" onclick="abrirModalAddMoto(this)" >
+							  + Nova Moto
+							</button>
+						  </div>
+
+						  <div class="overflow-x-auto">
+							<table class="w-full text-sm border rounded-lg overflow-hidden">
+							  <thead class="bg-gray-100">
+								<tr>
+								  <th class="text-left px-3 py-2">Modelo</th>
+								  <th class="text-left px-3 py-2">Placa</th>
+								  <th class="text-left px-3 py-2">Ano</th>
+								  <th class="text-left px-3 py-2">Ações</th>
+								</tr>
+							  </thead>
+							  <tbody>
+								<% motos.forEach(dados_moto=>{ %>
+									<tr class="border-t">
+									  <td class="px-3 py-2"><%= dados_moto.modelo %></td>
+									  <td class="px-3 py-2"><%= dados_moto.placa %></td>
+									  <td class="px-3 py-2"><%= dados_moto.ano %></td>
+									  <td class="px-3 py-2">
+									  
+									  <button
+										  class="text-indigo-600 hover:underline text-sm"
+										  onclick="abrirModalMoto(this)"
+										  data-id="1"
+										  data-modelo="<%= dados_moto.modelo %>"
+										  data-placa="<%= dados_moto.placa %>"
+										  data-ano="<%= dados_moto.ano %>"
+										>Editar</button>
+									  </td>
+									</tr>
+								<% }) %>
+							  </tbody>
+							</table>
+						  </div>
+						</div>
+
+
+			  
+			  
+					<% }) %>
+			  </div>
+            </div>
+          </div>
+          <div class="text-center text-xs text-gray-400 dark:text-gray-600 py-4"> © 2025 Ordem de Serviço. Todos os direitos reservados. </div>
+        </div>
+        <div class="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-30">
+
+          <!--<button class="group flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 rounded-full px-6 py-4" id="openModalBtn">
+		  --><button
+  class="group flex items-center justify-center gap-2
+         bg-primary hover:bg-primary-hover text-white
+         shadow-lg hover:shadow-xl hover:scale-105
+         transition-all duration-200
+         rounded-full
+         px-4 py-3 md:px-6 md:py-4"
+  id="openModalBtn"
+>
+		  
+            <span class="material-icons-round text-xl">add</span>
+            <span class="font-semibold text-sm">Nova Ordem de Serviço</span>
+          </button>
+        </div>
+      </main>
+    </div>
+	
+	
+	
+							<div id="modalMoto"   class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+								<div class="bg-white rounded-lg w-full max-w-lg p-6">
+								<div class="flex justify-between items-center mb-4">
+								  <h3 class="text-base font-semibold">Editar Moto</h3>
+								  <button onclick="fecharModalMoto()" class="text-gray-500 hover:text-gray-700">
+									✕
+								  </button>
+								</div>
+
+    <form class="space-y-4" id="formulario" action="javascript:func()" method="post">
+		<input type="hidden" id="uid_usuario"  value="<%= uid_usuario %>">
+		<input type="hidden" id="id_cliente"  value="<%= id_cliente %>">
+		<input type="hidden" id="moto_id">
+		<div>
+			<label class="block text-sm font-medium mb-1">Modelo</label>
+			<input id="modelo_moto" class="w-full h-9 px-3 text-sm rounded-md border border-gray-300" />
+		</div>
+		<div class="grid grid-cols-2 gap-4">
+			<div>
+				<label class="block text-sm font-medium mb-1">Placa</label>
+				<input id="placa_moto" class="w-full h-9 px-3 text-sm rounded-md border border-gray-300" />
+			</div>
+			<div>
+				<label class="block text-sm font-medium mb-1">Ano</label>
+				<input id="ano_moto" class="w-full h-9 px-3 text-sm rounded-md border border-gray-300" />
+			</div>
+		</div>
+		<div class="flex justify-end gap-3 pt-4">
+			<button type="button"
+					onclick="fecharModalMoto()"
+					class="px-4 py-2 text-sm bg-gray-200 rounded-md">
+					Cancelar
+			</button>
+			<button id="alterarMoto" class="px-4 py-2 text-sm bg-indigo-500 text-white rounded-md">Salvar</button>
+		</div>
+    </form>
+  </div>
+</div>
+
+	
+	
+<div id="modalAddMoto"   class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+	<div class="bg-white rounded-lg w-full max-w-lg p-6">
+		<div class="flex justify-between items-center mb-4">
+			<h3 class="text-base font-semibold">Adicionar Moto</h3>
+			<button onclick="fecharModalMoto()" class="text-gray-500 hover:text-gray-700">✕</button>
+		</div>
+		<form class="space-y-4" id="formulario" action="javascript:func()" method="post">
+			<input type="hidden" id="uid_usuario"  value="<%= uid_usuario %>">
+			<input type="hidden" id="id_cliente"  value="<%= id_cliente %>">
+			<input type="hidden" id="moto_id">
+			<div>
+				<label class="block text-sm font-medium mb-1">Modelo</label>
+				<input id="modelo_moto" class="w-full h-9 px-3 text-sm rounded-md border border-gray-300" />
+			</div>
+			<div class="grid grid-cols-2 gap-4">
+			<div>
+				<label class="block text-sm font-medium mb-1">Placa</label>
+				<input id="placa_moto" class="w-full h-9 px-3 text-sm rounded-md border border-gray-300" />
+			</div>
+			<div>
+				<label class="block text-sm font-medium mb-1">Ano</label>
+				<input id="ano_moto" class="w-full h-9 px-3 text-sm rounded-md border border-gray-300" />
+			</div>
+			</div>
+			<div class="flex justify-end gap-3 pt-4">
+				<button type="button" onclick="fecharModalMoto()" class="px-4 py-2 text-sm bg-gray-200 rounded-md">Cancelar </button>
+				<button id="addMoto" class="px-4 py-2 text-sm bg-indigo-500 text-white rounded-md">Salvar</button>
+			</div>
+		</form>
+	</div>
+</div>
+	
+	
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm modal" id="modalOverlay">
+		<div class="bg-surface-light dark:bg-surface-dark w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden modal-content m-4 border border-gray-100 dark:border-gray-700/50 flex flex-col max-h-[95vh]">
+			<div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/20">
+			<h3 class="text-lg font-bold text-gray-800 dark:text-white">Nova Ordem de Serviço</h3>
+		<button class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors" onclick="closeModal()">
+		<span class="material-icons-round">close</span>
+		</button>
+		</div>
+		<div class="p-6 overflow-y-auto custom-scrollbar">
+		<div class="grid grid-cols-6 gap-4">
+		<div class="col-span-2 space-y-1">
+		<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Placa</label>
+		<input id="placa" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none" placeholder="ABC-1234" type="text"/>
+		</div>
+		<div class="col-span-4 space-y-1">
+		<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Cliente</label>
+		<input id="cliente" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none" placeholder="Nome do cliente" type="text"/>
+		</div>
+		<div class="col-span-2 space-y-1">
+		<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Data Entrada</label>
+		<input id="competencia" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none" type="date"/>
+		
+		</div>
+		<div class="col-span-2 space-y-1">
+		<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Previsão</label>
+		<div class="relative">
+		<input id="dataPrevisaoSaida" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none" type="date"/>
+		</div>
+		</div>
+		<div class="col-span-2 space-y-1">
+		<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Valor (R$)</label>
+		<input id="valor" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none" placeholder="0,00" type="text"/>
+		</div>
+		<div class="col-span-3 space-y-1">
+		<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Tipo de Serviço</label>
+		<div class="relative">
+		<select id="tipo_servico" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none appearance-none">
+			<option value="">Selecione</option>
+		</select>
+		<span class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+		<span class="material-icons-round text-lg">expand_more</span>
+		</span>
+		</div>
+		</div>
+		<div class="col-span-3 space-y-1">
+		<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Situação</label>
+		<div class="relative">
+		<select id="situacao" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none appearance-none">
+			<option value="">Selecione</option>
+		</select>
+		<span class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+		<span class="material-icons-round text-lg">expand_more</span>
+		</span>
+		</div>
+		</div>
+		<div class="col-span-6 space-y-1">
+		<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Observação</label>
+		<textarea id="observacao" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none resize-none h-20"></textarea>
+		</div>
+		</div>
+		</div>
+		<div class="px-6 py-4 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-3 bg-gray-50/50 dark:bg-gray-800/20">
+		<button class="px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white font-medium hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors text-sm" id="closeModalBtn">
+						Cancelar
+					</button>
+		<button id="salvarOS" class="px-6 py-2 bg-primary hover:bg-primary-hover text-white font-medium rounded-lg shadow-sm hover:shadow hover:-translate-y-0.5 transition-all duration-200 text-sm">
+						Salvar Ordem
+					</button>
+		</div>
+		</div>
+		</div>
+		
+	<div id="modalDetalhes" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50" >
+		<div class="bg-white w-full max-w-lg rounded-xl shadow-lg p-6 relative">
+			<button onclick="fecharModalDetalhes()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600" >✕</button>
+			<h2 class="text-xl font-semibold mb-4">Detalhes da Ordem de Serviço</h2>
+			<div class="space-y-2 text-sm">
+				<p><strong>Nº OS:</strong> <span id="modal-os"></span></p>
+				<p><strong>Cliente:</strong> <span id="modal-cliente"></span></p>
+				<p><strong>Entrada:</strong> <span id="modal-entrada"></span></p>
+				<p><strong>Previsão:</strong> <span id="modal-prev"></span></p>
+				<p><strong>Status:</strong> <span id="modal-status"></span></p>
+				<p><strong>observaçaõ:</strong> <span id="modal-observacao"></span></p>
+				
+				
+				
+			</div>
+			<div class="mt-6 text-right">
+				<button onclick="fecharModalDetalhes()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700" >Fechar</button>
+			</div>
+		</div>
+	</div>
+
+	
+	
+    <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.js"></script>
+	<script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const icon = document.querySelector('#menuBtn span');
+
+    const isOpen = !sidebar.classList.contains('-translate-x-full');
+
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+
+    icon.textContent = isOpen ? 'menu' : 'close';
+  }
+</script>
+
+
+    <script>
+	
+		document.getElementById("placa").addEventListener("blur", async function () {
+			const placa = this.value.trim();
+
+			if (placa !== "") {
+			try {
+				// Chama a API
+				const response = await fetch(`/getDados/${placa}`);
+			  
+				if (!response.ok) {
+					throw new Error("Erro ao buscar dados");
+				}
+
+				const dados = await response.json();
+				console.log(dados)
+				// Preenche o campo cliente
+				document.getElementById("cliente").value = dados.cliente || "";
+
+			} catch (error) {
+			  console.error("Erro:", error);
+			  document.getElementById("cliente").value = "";
+			}
+			}
+		});
+	
+	
+      // Modal Logic
+      const openModalBtn = document.getElementById('openModalBtn');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const modalOverlay = document.getElementById('modalOverlay');
+
+      function openModal() {
+        modalOverlay.classList.add('active');
+      }
+
+      function closeModal() {
+        modalOverlay.classList.remove('active');
+      }
+      openModalBtn.addEventListener('click', openModal);
+      closeModalBtn.addEventListener('click', closeModal);
+      // Close modal when clicking outside content
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+          closeModal();
+        }
+      });
+      // Close modal on escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+          closeModal();
+        }
+      });
+    </script>
+	<script>
+		const campo = document.getElementById('valor');
+		
+		campo.addEventListener('input', () => {
+		  let valor = campo.value.replace(/\D/g, ''); // remove tudo que não é número
+		  valor = (valor / 100).toFixed(2) + ''; // divide por 100 e fixa 2 casas
+		  valor = valor.replace('.', ','); // troca ponto por vírgula
+		  //valor = 'R$ ' + valor.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // formata milhar
+		  valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // formata milhar
+		  valor = valor.replace(',', '.');
+		  campo.value = valor;
+		});
+</script>
+<script>
+		$(document).ready(function () {
+		
+			//COMBO TIPO DE SERVIÇO
+			$.get("/tipo_servico", function (data, status) {			
+				var select2 = $('#tipo_servico');
+				select2.html('');
+				select2.append('<option value="" selected>Selecione</option>');
+				for (let i = 0; i < data.length; i++) {
+					select2.append('<option value="' + data[i].id + '">' + data[i].nome + '</option>');
+				}
+			});
+			
+			//COMBO SITUAÇAO
+			$.get("/situacao", function (data, status) {
+				var select2 = $('#situacao');
+				select2.html('');
+				select2.append('<option value="" selected>Selecione</option>');
+				for (let i = 0; i < data.length; i++) {
+					select2.append('<option value="' + data[i].id + '">' + data[i].nome + '</option>');
+				}
+			});
+		
+			function Competencia() {
+				var data = new Date();
+				var dia = String(data.getDate()).padStart(2, '0');
+				var mes = String(data.getMonth() + 1).padStart(2, '0');
+				var ano = data.getFullYear();
+				dataAtual = dia + '/' + mes + '/' + ano;
+				return dataAtual;
+			}
+			
+			var getData = Competencia();
+			document.getElementById("competencia").value = getData;
+		
+			$("#salvarOS").click(function () {
+				
+				let placa = $("#placa").val();				
+				let cliente = $("#cliente").val();				
+				let dataLancamento = $("#competencia").val();				
+				let dataPrevisaoSaida = $("#dataPrevisaoSaida").val();				
+				let situacao = $("#situacao").val();
+				let tipo_servico = $("#tipo_servico").val();
+				let valor = $("#valor").val();
+				let obs = $("#observacao").val();
+				let uid_usuario = "JwBQb518jg"
+
+
+
+				console.log(dataPrevisaoSaida)
+				console.log(dataLancamento)
+				if(dataPrevisaoSaida==""){
+					dataPrevisaoSaida="";
+				}else{
+					dataPrevisaoSaida = formatarData(dataPrevisaoSaida);
+				}
+				
+				if(dataLancamento==""){
+					alert("Informe a Data de Entrada")
+					return;
+				}
+				
+				let dataLanc = formatarData(dataLancamento)
+				
+				console.log(dataLanc)
+				
+				
+				
+				$.post('/addOS', {
+
+					placa: placa,
+					cliente: cliente,
+					dataLancamento: dataLanc,
+					dataPrevisaoSaida: dataPrevisaoSaida,
+					situacao: situacao,
+					tipo_servico: tipo_servico,
+					valor: valor,
+					observacao: obs,
+					uid_usuario: uid_usuario
+					
+				}, function (resposta) {
+					alert(resposta.mensagem)
+					window.location.href = "/principal/"+"<%= uid_usuario %>"
+					
+				});				
+			})
+		
+		
+		function formatarData(data){
+			
+			
+			//const data = "2025-09-30";
+			const partes = data.split("-");
+			const date = new Date(partes[0], partes[1] - 1, partes[2]); // ano, mês (0-index), dia
+
+			const formatada = date.toLocaleDateString("pt-BR");
+			console.log(formatada); // 30/09/2025
+			return formatada;
+
+		}
+
+		document.getElementById("placa").addEventListener("blur", async function () {
+			const placa = this.value.trim();
+
+			if (placa !== "") {
+			try {
+				// Chama a API
+				const response = await fetch(`/getDados/${placa}`);
+			  
+				if (!response.ok) {
+					throw new Error("Erro ao buscar dados");
+				}
+
+				const dados = await response.json();
+				console.log(dados)
+				// Preenche o campo cliente
+				document.getElementById("cliente").value = dados.cliente || "";
+
+			} catch (error) {
+			  console.error("Erro:", error);
+			  document.getElementById("cliente").value = "";
+			}
+			}
+		});
+		
+		
+		
+
+  })
+	function visualizar(id){
+		//COMBO SITUAÇAO
+		$.get("/dadosOs/"+id, function (data, status) {
+			console.log(data)
+			
+			for (let i = 0; i < data.length; i++) {
+				console.log(data[i].numeroOS)
+				document.getElementById("numeroOS").textContent =data[i].numeroOS;				
+				document.getElementById("nomeCliente").textContent =data[i].cliente;
+				
+				
+				//document.getElementById("nomeCliente").textContent =data[i].dataLancamento;
+				//document.getElementById("nomeCliente").textContent =data[i].valor;
+				
+			}
+			
+		});
+	}
+	function concluirOrdemServico(idOrdemServico){
+		//alert(idOrdemServico);
+		if (confirm("Confirma a Finalização da Ordem de Serviço?")) {
+			$.post('/finalizarOrdemServico', {
+				idOrdemServico: idOrdemServico			
+			}, function (resposta) {
+				alert(resposta.mensagem)
+				window.location.href = "/principal/"+"<%= uid_usuario %>"
+			});			
+		}
+	}
+	</script>
+	<script>
+		function abrirModalDetalhes(btn) {
+			document.getElementById('modal-os').innerText = btn.dataset.os
+			document.getElementById('modal-cliente').innerText = btn.dataset.cliente
+			document.getElementById('modal-entrada').innerText = btn.dataset.entrada
+			document.getElementById('modal-prev').innerText = btn.dataset.prev || '-'
+			document.getElementById('modal-status').innerText = btn.dataset.status
+			document.getElementById('modal-observacao').innerText = btn.dataset.observacao
+
+			document.getElementById('modalDetalhes').classList.remove('hidden')
+		}
+		function fecharModalDetalhes() {
+			document.getElementById('modalDetalhes').classList.add('hidden')
+		}
+</script>
+<script src="/assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="/js/jquery.mask.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        function limpa_formulário_cep() {
+          // Limpa valores do formulário de cep.
+          $("#rua").val("");
+          $("#bairro").val("");
+          $("#cidade").val("");
+          $("#uf").val("");
+          $("#ibge").val("");
+        }
+        //Quando o campo cep perde o foco.
+        $("#cep").blur(function() {
+          //Nova variável "cep" somente com dígitos.
+          var cep = $(this).val().replace(/\D/g, '');
+          //Verifica se campo cep possui valor informado.
+          if (cep != "") {
+            //Expressão regular para validar o CEP.
+            var validacep = /^[0-9]{8}$/;
+            //Valida o formato do CEP.
+            if (validacep.test(cep)) {
+              //Preenche os campos com "..." enquanto consulta webservice.
+              $("#endereco").val("...");
+              $("#bairro").val("...");
+              $("#cidade").val("...");
+              $("#uf").val("...");
+              $("#ibge").val("...");
+              //Consulta o webservice viacep.com.br/
+              $.getJSON("https://viacep.com.br/ws/" + cep + "/json/?callback=?", function(dados) {
+                if (!("erro" in dados)) {
+                  //Atualiza os campos com os valores da consulta.
+                  $("#endereco").val(dados.logradouro);
+                  $("#bairro").val(dados.bairro);
+                  $("#cidade").val(dados.localidade);
+                  $("#uf").val(dados.uf);
+                  $("#ibge").val(dados.ibge);
+                  $("#numero").focus();
+                } //end if.
+                else {
+                  //CEP pesquisado não foi encontrado.
+                  limpa_formulário_cep();
+                  alert("CEP não encontrado.");
+                }
+              });
+            } //end if.
+            else {
+              //cep é inválido.
+              limpa_formulário_cep();
+              alert("Formato de CEP inválido.");
+            }
+          } //end if.
+          else {
+            //cep sem valor, limpa formulário.
+            limpa_formulário_cep();
+          }
+        });
+      });
+    </script>
+    <script>
+      $(document).ready(function() {
+        //https://blog.igorescobar.com/2012/03/13/mascaras-com-jquery-mask-plugin/
+        $('#documento').mask('000.000.000-00', {
+          reverse: true
+        });
+        $('#nascimento').mask('00/00/0000');
+        $('#cep').mask('00000-000');
+        $('#celular').mask('(00)00000-0000');
+        $('#telefone').mask('(00)0000-0000');
+        $('#addMoto').click(function() {
+          var uid_usuario = $("#uid_usuario").val();
+          var id_cliente = $("#id_cliente").val();
+          var id_empresa = $("#id_empresa").val();
+          var placa = $("#placa_moto_nova").val();
+          var marca = $("#marca_moto_nova").val();
+          var modelo = $("#modelo_moto_nova").val();
+          var ano = $("#ano_moto_nova").val();
+          console.log(id_cliente)
+          console.log(id_empresa)
+          $.post('/moto_add', {
+            uid_usuario,
+            id_cliente,
+            id_empresa,
+            placa,
+            modelo,
+            marca,
+            ano
+          }, function(resposta) {
+            alert(resposta.mensagem)
+            window.location.href = "/clienteEditar/" + uid_usuario + "/" + id_cliente
+            //toastr["success"]("Contas a pagar cadastrado com sucesso.")
+          });
+        })
+        $("#alterarMoto").click(function() {
+          var uid_usuario = $("#uid_usuario").val();
+          var id_cliente = $("#id_cliente").val();
+          var id_empresa = $("#id_empresa").val();
+          var placa = $("#placa_moto").val();
+          var marca = $("#marca_moto").val();
+          var modelo = $("#modelo_moto").val();
+          var ano = $("#ano_moto").val();
+          
+		  
+		  $.post('/moto_editar', {
+            uid_usuario,
+            id_cliente,
+            id_empresa,
+            placa,
+            modelo,
+            marca,
+            ano
+          }, function(resposta) {
+            alert(resposta.mensagem)
+			window.location.href = "/clienteEditar/" + uid_usuario + "/" + id_cliente
+            //toastr["success"]("Contas a pagar cadastrado com sucesso.")
+          });
+        })
+		
+        $("#alterarDados").click(function() {
+          var uid_usuario = $("#uid_usuario").val();
+          var id_cliente = $("#id_cliente").val();
+          var id_empresa = $("#id_empresa").val();
+          var nome = $("#nome").val();
+          var email = $("#email").val();
+          var data_nascimento = $("#nascimento").val();
+          var cpf_cnpj = $("#documento").val();
+          var telefone = $("#telefone").val();
+          var celular = $("#celular").val();
+          var cep = $("#cep").val();
+          var endereco = $("#endereco").val();
+          var bairro = $("#bairro").val();
+          var cidade = $("#cidade").val();
+          var uf = $("#uf").val();
+          var numero = $("#numero").val();
+          var complemento = $("#complemento").val();
+          var observacao = $("#observacao").val();
+          $.post('/clienteEditar', {
+            uid_usuario,
+            id_cliente,
+            id_empresa,
+            nome,
+            email,
+            cpf_cnpj,
+            data_nascimento,
+            telefone,
+            celular,
+            cep,
+            endereco,
+            bairro,
+            cidade,
+            uf,
+            numero,
+            complemento,
+            observacao
+          }, function(resposta) {
+            alert("Cliente Atualizado com  sucesso.")
+            //toastr["success"]("Cliente Atualizado com  sucesso.")
+          });
+        })
+      })
+    </script>
+	
+	<script>
+  const tabs = document.querySelectorAll('.tab-btn');
+  const contents = document.querySelectorAll('.tab-content');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+
+      tabs.forEach(t => {
+        t.classList.remove('border-indigo-500', 'text-indigo-600');
+        t.classList.add('border-transparent', 'text-gray-500');
+      });
+
+      tab.classList.add('border-indigo-500', 'text-indigo-600');
+      tab.classList.remove('border-transparent', 'text-gray-500');
+
+      contents.forEach(c => c.classList.add('hidden'));
+      document.getElementById(`tab-${target}`).classList.remove('hidden');
+    });
+  });
+</script>
+<script>
+  function abrirModalMoto(btn) {
+    document.getElementById('moto_id').value = btn.dataset.id;
+    document.getElementById('modelo_moto').value = btn.dataset.modelo;
+    document.getElementById('placa_moto').value = btn.dataset.placa;
+    document.getElementById('ano_moto').value = btn.dataset.ano;
+
+    const modal = document.getElementById('modalMoto');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+	function abrirModalAddMoto(btn) {
+    document.getElementById('moto_id').value = btn.dataset.id;
+    document.getElementById('modelo_moto').value = btn.dataset.modelo;
+    document.getElementById('placa_moto').value = btn.dataset.placa;
+    document.getElementById('ano_moto').value = btn.dataset.ano;
+
+    const modal = document.getElementById('modalAddMoto');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+
+
+  function fecharModalMoto() {
+    const modal = document.getElementById('modalMoto');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  // Fecha clicando fora
+  document.getElementById('modalMoto').addEventListener('click', function (e) {
+    if (e.target === this) {
+      fecharModalMoto();
+    }
+  });
+</script>
+
+	
+  </body>
+</html>

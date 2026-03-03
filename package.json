@@ -1,0 +1,35 @@
+{
+  "name": "personalizarts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@prisma/client": "^7.4.1",
+    "base-64": "^1.0.0",
+    "body-parser": "^1.20.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.10",
+    "dotenv": "^16.0.3",
+    "ejs": "^3.1.8",
+    "express": "^4.18.3",
+    "knex": "^2.4.2",
+    "mailersend": "^2.2.0",
+    "moment": "^2.29.4",
+    "mysql2": "^3.14.5",
+    "save": "^2.9.0",
+    "sweetalert": "^2.1.2",
+    "sweetalert2": "^11.10.6",
+    "uid2": "^1.0.0",
+    "uniqid": "^5.4.0"
+  },
+  "devDependencies": {
+    "prisma": "^7.4.1"
+  }
+}
